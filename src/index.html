@@ -1,13 +1,102 @@
-<!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>Assessment</title>
-  <base href="/">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="icon" type="image/x-icon" href="favicon.ico">
-</head>
-<body>
-  <app-root></app-root>
-</body>
+<!DOCTYPE html>
+<html>
+  <script type="text/javascript">
+    const names=[];
+    const ids=[];
+
+    function getParentData(){
+      var apiUrl = 'assets/parent.json';
+      
+      fetch(apiUrl).then(response => {
+          return response.json();
+        }).then(data => {
+          
+          var selectElement = document.getElementById('nameDropDown');
+          for(var i=0;i<data.length;i++)
+          {
+            
+            names[i]=data[i]['name'];
+            ids[i]=data[i]['Id'];
+            selectElement.add(new Option(data[i]['name']));
+          }
+         
+        
+        }).catch(err => {
+          alert(err.response);
+          
+  
+          
+        });
+
+    }
+    function buttonClicked(){
+      
+      var selectElement = document.getElementById('nameDropDown');
+      var idToCheck=ids[selectElement.selectedIndex];
+      //alert(id);
+      var apiUrl = 'assets/child.json';
+      fetch(apiUrl).then(response => {
+          return response.json();
+        }).then(data => {
+          
+          var check=0;
+          for(var i=0;i<data.length;i++)
+          {
+            var currentId=data[i]['Id'];
+            if(idToCheck==currentId)
+            {
+             
+              check=1;
+              var s="Age is "+data[i]['age'];
+              
+              document.getElementById('displayResult').innerHTML=s;
+              document.getElementById('displayError').innerHTML="";
+              break;
+            }
+
+          }
+          if(check==0)
+          {
+            
+            document.getElementById('displayError').innerHTML="Not Found";
+            document.getElementById('displayResult').innerHTML="";
+          }
+         }).catch(err => {
+          alert(err.response);
+        });
+
+
+    }
+   
+     getParentData();
+  </script>
+  <head>
+    <title>Assessment</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700" rel="stylesheet">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    
+  </head>
+  <body>
+    <div class="testbox">
+      <formm action="/">
+        <div class="banner">
+          <h1>Assessment</h1>
+        </div>
+        
+        <div class="item">
+          <p>Select </p>
+          <select id="nameDropDown">
+            
+          </select>
+        </div>
+        
+        <div class="btn-block">
+          <button type="submit" onclick="buttonClicked()">SUBMIT</button>
+        </div>
+        <h2 id="displayError"></h3>
+      </formm>
+      
+    </div>
+    <h2 style="padding-left: 2.5%;" id="displayResult"></h3>
+  </body>
 </html>
